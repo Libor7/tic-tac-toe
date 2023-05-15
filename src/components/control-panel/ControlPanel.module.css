@@ -1,0 +1,55 @@
+.modal-fade-slide {
+    position: fixed;
+    top: 20vh;
+    background-color: #fff;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    z-index: 30;
+    transition: all 0.5s ease-out;
+  }
+  
+  .modal-fade-slide-enter {
+    animation: slide-down 500ms ease-out forwards;
+  }
+  
+  .modal-fade-slide-enter-active {
+    animation: slide-down 500ms ease-out forwards;
+  }
+  
+  .modal-fade-slide-exit {
+    animation: slide-up 500ms ease-out forwards;
+  }
+  
+  .modal-fade-slide-exit-active {
+    animation: slide-up 500ms ease-out forwards;
+  }
+  
+  @media (min-width: 768px) {
+    .modal-overlay {
+      width: 40rem;
+      left: calc(50% - 20rem);
+    }
+  }
+  
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-3rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slide-up {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-3rem);
+    }
+  }
+  

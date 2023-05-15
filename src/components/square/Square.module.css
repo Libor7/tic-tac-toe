@@ -1,0 +1,24 @@
+.square-base {
+    width: var(--square-side);
+    height: var(--square-side);
+    border: 1px solid var(--primary-color);
+    /* border-style: solid; */
+    /* border-color: var(--primary-color); */
+    /* border-width: 1px; */
+}
+
+.top-square {
+    border-top-color: var(--secondary-color);
+}
+
+.bottom-square {
+    border-bottom-color: var(--secondary-color);
+}
+
+.left-square {
+    border-left-color: var(--secondary-color);
+}
+
+.right-square {
+    border-right-color: var(--secondary-color);
+}

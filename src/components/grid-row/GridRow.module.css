@@ -1,0 +1,4 @@
+.grid-row-base {
+    display: flex;
+    flex-direction: row;
+}
