@@ -1,36 +1,56 @@
 /** LIBRARIES */
-import React, { useMemo, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 /** STYLES */
 import classes from "./Board.module.css";
 
 /** CUSTOM */
-import { getCSSvar, pxToNumber } from "../../util/util";
 import { RootState } from "../../store";
 
 /** CUSTOM COMPONENTS */
 import Grid from "../grid/Grid";
 
-const Board = () => {
-  // let boardHeight: number;
-  const { resultBarHeight } = useSelector((state: RootState) => ({
-    resultBarHeight: state.result.resultBarHeight,
-  }));
-  const [boardHeight, setBoardHeight] = useState<string>();
-  const buttonSize = useMemo(() => pxToNumber(getCSSvar("--button-side")), []);
-  // console.log('test: ', window.innerWidth, window.innerHeight, buttonSize, resultBarHeight);
-  // const boardHeight = window.innerHeight - buttonSize - resultBarHeight;
+interface BoardProps {
+  parentWidth: number;
+  parentHeight: number;
+}
+
+const Board: FC<BoardProps> = (props) => {
+  const { parentWidth, parentHeight } = props;
+  // btn na posunutie resultBar z dola napravo - vedla seba zlava doprava: controlPanel, board, resultBar - či správne pridáva max columns a max rows
+  // 768 - modal zmenšiť
+
+  const { buttonSide, resultBarHeight, tabletBreakpoint } = useSelector(
+    (state: RootState) => ({
+      buttonSide: state.globalVars.buttonSide,
+      resultBarHeight: state.globalVars.resultBarHeight,
+      tabletBreakpoint: state.globalVars.tabletBreakpoint,
+    })
+  );
+  const [boardHeight, setBoardHeight] = useState<number>();
 
   useEffect(() => {
     if (resultBarHeight > 0) {
-      console.log('useEffect: ', window.innerWidth, window.innerHeight, buttonSize, resultBarHeight);
-      setBoardHeight((window.innerHeight - buttonSize - resultBarHeight) + 'px');
+      const height =
+        window.innerWidth >= tabletBreakpoint
+          ? window.innerHeight - resultBarHeight
+          : window.innerHeight - buttonSide - resultBarHeight;
+      setBoardHeight(height);
     }
-  }, [buttonSize, resultBarHeight]);
+  }, [
+    buttonSide,
+    parentHeight,
+    parentWidth,
+    resultBarHeight,
+    tabletBreakpoint,
+  ]);
 
   return (
-    <div className={`${classes["board-base"]}`} style={{ height: boardHeight }}>
+    <div
+      className={`${classes["board-base"]}`}
+      style={{ height: `${boardHeight}px` }}
+    >
       <Grid />
     </div>
   );

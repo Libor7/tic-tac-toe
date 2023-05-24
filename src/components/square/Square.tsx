@@ -16,9 +16,10 @@ interface SquareProps {
 
 const Square: FC<SquareProps> = (props) => {
   const { xAxis, yAxis } = props;
-  const { columns, rows } = useSelector((state: RootState) => ({
+  const { columns, rows, squareSide } = useSelector((state: RootState) => ({
     columns: state.grid.gridColumns,
     rows: state.grid.gridRows,
+    squareSide: state.globalVars.squareSide
   }));
   const squareClasses = setSquareClasses({xAxis, yAxis, columns, rows}).map((cls: string) => `${classes[cls]}`).join(" ");
 
@@ -27,6 +28,7 @@ const Square: FC<SquareProps> = (props) => {
   return (
     <div
       className={squareClasses}
+      style={{ width: squareSide, height: squareSide }}
       data-col={xAxis}
       data-row={yAxis}
       onClick={clickedSquareHandler}

@@ -1,14 +1,22 @@
 /** LIBRARIES */
 import { createSlice, configureStore } from "@reduxjs/toolkit";
 
+/** MODELS */
+import {
+  GlobalVariablesState,
+  GridState,
+  IconState,
+  ResultState,
+} from "../models/State";
+
 /** CUSTOM */
 import { setNewGrid } from "../util/util";
 
-const initialIconState = {
+const initialIconState: IconState = {
   allControlsDisplayed: false,
 };
 
-const initialGridState = {
+const initialGridState: GridState = {
   grid: setNewGrid(3, 3),
   lastMove: null,
   gridRows: 3,
@@ -17,12 +25,28 @@ const initialGridState = {
   maxGridColumns: 3,
 };
 
-const initialResultState = {
+const initialResultState: ResultState = {
   playAgainstComp: false,
   computerPlaysAs: "nought",
   noughtsPlayerPoints: 0,
   crossesPlayerPoints: 0,
   starts: "cross",
+};
+
+const initialGlobalVariablesState: GlobalVariablesState = {
+  /** In px */
+  largeMobileBreakpoint: 600,
+  /** In px */
+  tabletBreakpoint: 900,
+  /** In px */
+  desktopBreakpoint: 1200,
+  /** Size in px */
+  buttonSide: 64,
+  /** Size in px */
+  squareSide: 58,
+  /** Size in px */
+  controlPanelWidth: 0,
+  /** Size in px */
   resultBarHeight: 0,
 };
 
@@ -50,37 +74,71 @@ const gridSlice = createSlice({
   initialState: initialGridState,
   reducers: {
     incrementGridRows(state) {
-      setNewGrid(state.gridColumns, ++state.gridRows);
+      return {
+        ...state,
+        grid: setNewGrid(state.gridColumns, state.gridRows + 1),
+        lastMove: null,
+        gridRows: state.gridRows + 1,
+      };
     },
     decrementGridRows(state) {
-      setNewGrid(state.gridColumns, --state.gridRows);
+      return {
+        ...state,
+        grid: setNewGrid(state.gridColumns, state.gridRows - 1),
+        lastMove: null,
+        gridRows: state.gridRows - 1,
+      };
     },
     incrementGridColumns(state) {
-      setNewGrid(++state.gridColumns, state.gridRows);
+      return {
+        ...state,
+        grid: setNewGrid(state.gridColumns + 1, state.gridRows),
+        lastMove: null,
+        gridColumns: state.gridColumns + 1,
+      };
     },
     decrementGridColumns(state) {
-      setNewGrid(--state.gridColumns, state.gridRows);
+      return {
+        ...state,
+        grid: setNewGrid(state.gridColumns - 1, state.gridRows),
+        lastMove: null,
+        gridColumns: state.gridColumns - 1,
+      };
     },
     setMaxGridRows(state, action) {
       return {
         ...state,
-        maxGridRows: action.payload,
+        maxGridRows: action.payload as number,
       };
     },
     setMaxGridColumns(state, action) {
       return {
         ...state,
-        maxGridColumns: action.payload,
+        maxGridColumns: action.payload as number,
       };
     },
     setNewGame(state) {
-      setNewGrid(state.gridColumns, state.gridRows);
+      return {
+        ...state,
+        grid: setNewGrid(3, 3),
+        lastMove: null,
+        gridRows: 3,
+        gridColumns: 3,
+      };
     },
-    set() {
-      // zmeniť hodnotu jedného square - možno aj undoLastMove(state) - utils.ts možno 
+    setSquareValue() {
+      // zmeniť hodnotu square - možno aj undoLastMove(state) - utils.ts možno
+      // return {
+      //   ...state,
+      //   grid:
+      // };
     },
     undoLastMove(state) {
-      // zmeniť hodnotu v grid podla lastMove 
+      // zmeniť hodnotu v grid podla lastMove
+      // return {
+      //   ...state,
+      //   grid:
+      // };
     },
   },
 });
@@ -95,10 +153,23 @@ const resultSlice = createSlice({
         playAgainstComp: !state.playAgainstComp,
       };
     },
-    adjustResultBarHeight(state, action) {
+  },
+});
+
+const globalVariablesSlice = createSlice({
+  name: "globalVars",
+  initialState: initialGlobalVariablesState,
+  reducers: {
+    setControlPanelWidth(state, action) {
       return {
         ...state,
-        resultBarHeight: action.payload,
+        controlPanelWidth: action.payload as number,
+      };
+    },
+    setResultBarHeight(state, action) {
+      return {
+        ...state,
+        resultBarHeight: action.payload as number,
       };
     },
   },
@@ -109,6 +180,7 @@ const store = configureStore({
     icons: iconSlice.reducer,
     grid: gridSlice.reducer,
     result: resultSlice.reducer,
+    globalVars: globalVariablesSlice.reducer,
   },
 });
 
@@ -117,5 +189,6 @@ export type RootState = ReturnType<typeof store.getState>;
 export const iconActions = iconSlice.actions;
 export const gridActions = gridSlice.actions;
 export const resultActions = resultSlice.actions;
+export const globalVariablesActions = globalVariablesSlice.actions;
 
 export default store;

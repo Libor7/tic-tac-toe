@@ -1,5 +1,6 @@
 /** LIBRARIES */
-import React, { FC, useMemo } from "react";
+import React, { FC } from "react";
+import { useSelector } from "react-redux";
 
 /** STYLES */
 import classes from "./Buttons.module.css";
@@ -8,11 +9,12 @@ import classes from "./Buttons.module.css";
 import { Icon as IconModel } from "../../models/Icon";
 
 /** CUSTOM */
-import { getCSSvar, pxToNumber } from "../../util/util";
+import { RootState } from "../../store";
 
 /** CUSTOM COMPONENTS */
 import Button from "../ui/button/Button";
 import Icon from "../ui/icon/Icon";
+import ButtonLabel from "../ui/button-label/ButtonLabel";
 
 interface ButtonsProps {
   icons: IconModel[];
@@ -22,12 +24,16 @@ interface ButtonsProps {
 
 const Buttons: FC<ButtonsProps> = (props) => {
   const { icons, initial, inRow } = props;
+  const { buttonSide, desktopBreakpoint } = useSelector((state: RootState) => ({
+    buttonSide: state.globalVars.buttonSide,
+    desktopBreakpoint: state.globalVars.desktopBreakpoint,
+  }));
 
-  const buttonSize = useMemo(() => pxToNumber(getCSSvar("--button-side")), []);
-  const buttonsWidth = inRow * buttonSize + "px";
+  const desktopView = window.innerWidth >= desktopBreakpoint;
+  const buttonsWidth = desktopView ? 'unset' : inRow * buttonSide + 'px';
 
   return (
-    <div style={{ width: buttonsWidth }}>
+    <div className={`${classes["buttons-base"]}`} style={{ width: buttonsWidth }}>
       {icons
         .filter((icon: IconModel) =>
           initial
@@ -37,6 +43,7 @@ const Buttons: FC<ButtonsProps> = (props) => {
         .map((icon: IconModel) => (
           <Button key={icon.name} onClick={icon.clickHandler!}>
             <Icon name={icon.name} />
+            {desktopView && <ButtonLabel labelText={icon.label ?? ""} />}
           </Button>
         ))}
     </div>

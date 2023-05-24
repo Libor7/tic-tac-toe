@@ -1,0 +1,4 @@
+.button-label-base {
+  flex-grow: 1;
+  white-space: nowrap;
+}

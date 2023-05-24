@@ -1,19 +1,25 @@
 .button-base {
-    background-color: var(--secondary-color);
-    color: var(--primary-color);
-    width: var(--button-side);
-    height: var(--button-side);
-    padding: 0;
-    /* TODO font-size: 1.5rem;   24px    font family, font-weight */
-    border: unset;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  padding: 0;
+  /* TODO font-size: 1.5rem;   24px    font family, font-weight */
+  border: unset;
+  padding: 0;
+}
+
+@media (min-width: 1200px) {
+  .button-base {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .button-enabled {
-    cursor: pointer;
-    opacity: 1;
+  cursor: pointer;
+  opacity: 1;
 }
 
 .button-disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
+  cursor: not-allowed;
+  opacity: 0.6;
 }

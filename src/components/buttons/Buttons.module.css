@@ -1,0 +1,16 @@
+.buttons-base {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 900px) {
+  .buttons-base {
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 1200px) {
+  .buttons-base {
+    padding: 8px;
+  }
+}

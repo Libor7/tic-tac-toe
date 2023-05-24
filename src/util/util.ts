@@ -1,15 +1,5 @@
 import { SquareStatus } from "../models/Square";
 
-export const getCSSvar = (varName: string) => {
-  const rootElement = document.querySelector(":root")!;
-  const rootStyles = getComputedStyle(rootElement);
-  return rootStyles.getPropertyValue(varName);
-};
-
-export const pxToNumber = (val: string) => {
-  return +val.trim().split("px")[0];
-};
-
 export const setSquareClasses = (squareObj: {
   xAxis: number;
   yAxis: number;
@@ -37,6 +27,6 @@ export const setSquareClasses = (squareObj: {
   return squareClasses;
 };
 
-export const setNewGrid = (columns: number, rows: number) => {
+export const setNewGrid = (columns: number, rows: number): number[][] => {
   return new Array(rows).fill(new Array(columns).fill(SquareStatus.EMPTY));
 };

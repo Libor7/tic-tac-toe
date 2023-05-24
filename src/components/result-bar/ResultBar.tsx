@@ -1,12 +1,12 @@
 /** LIBRARIES */
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 /** STYLES */
 import classes from "./ResultBar.module.css";
 
 /** CUSTOM */
-import { resultActions, RootState } from "../../store/index";
+import { resultActions, RootState, globalVariablesActions } from "../../store/index";
 
 const ResultBar = () => {
   const dispatch = useDispatch();
@@ -19,20 +19,26 @@ const ResultBar = () => {
     }));
 
   useEffect(() => {
-    dispatch(resultActions.adjustResultBarHeight(containerDivRef.current?.clientHeight!));
+    if (containerDivRef.current && containerDivRef.current.clientHeight > 0) {
+      dispatch(
+        globalVariablesActions.setResultBarHeight(containerDivRef.current?.clientHeight)
+      );
+    }
+  }, [containerDivRef.current?.clientHeight, dispatch]);
+
+  const checkboxHandler = useCallback(() => {
+    dispatch(resultActions.toggleOpponent());
   }, [dispatch]);
 
-  const checkboxHandler = () => {
-    dispatch(resultActions.toggleOpponent());
-  };
-
-  // TODO JSX 
+  // TODO JSX
   return (
     <div ref={containerDivRef}>
       <span>Player X: {crossesPlayerPoints}</span>
       <span>Player O: {noughtsPlayerPoints}</span>
       <br />
-      You play against {playAgainstComp ? "engine" : "human"}, switch to {playAgainstComp ? "human" : "engine"}: <input type="checkbox" onChange={checkboxHandler} />
+      You play against {playAgainstComp ? "engine" : "human"}, switch to{" "}
+      {playAgainstComp ? "human" : "engine"}:{" "}
+      <input type="checkbox" onChange={checkboxHandler} />
     </div>
   );
 };

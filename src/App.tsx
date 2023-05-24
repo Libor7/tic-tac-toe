@@ -1,15 +1,13 @@
 import React from "react";
-import "./App.css";
+// import "./App.css";
 import ControlPanel from "./components/control-panel/ControlPanel";
-import Board from "./components/board/Board";
-import ResultBar from "./components/result-bar/ResultBar";
+import MainArea from "./components/main-area/MainArea";
 
 const App = () => {
   return (
     <>
       <ControlPanel />
-      <Board />
-      <ResultBar />
+      <MainArea />
     </>
   );
 };
