@@ -7,7 +7,7 @@ type buttonType = "button" | "submit" | "reset" | undefined;
 
 interface ButtonProps {
   type?: buttonType;
-  disabled?: boolean;
+  disabled: boolean;
   children: React.ReactNode;
   onClick: () => void;
 }
@@ -17,11 +17,12 @@ const Button: FC<ButtonProps> = (props) => {
   const { buttonSide } = useSelector((state: RootState) => ({
     buttonSide: state.globalVars.buttonSide,
   }));
+  const classNames = `${classes["button-base"]} ${disabled && classes["button-disabled"]}`;
 
   return (
     <button
       type={type || "button"}
-      className={`${classes["button-base"]}`}
+      className={classNames}
       style={{ minWidth: buttonSide, height: buttonSide }}
       disabled={disabled}
       onClick={onClick}

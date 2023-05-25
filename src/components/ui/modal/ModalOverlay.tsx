@@ -39,7 +39,7 @@ const ModalOverlay: FC<ModalOverlayProps> = (props) => {
           // color: "var(--secondary-color)"
         }}
       >
-        <Button onClick={close}>
+        <Button onClick={close} disabled={false}>
           <Icon name="close" />
         </Button>
       </div>

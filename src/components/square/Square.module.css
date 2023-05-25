@@ -1,6 +1,8 @@
 .square-base {
-    /* width: var(--square-side);
-    height: var(--square-side); */
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid var(--primary-color);
     /* border-style: solid; */
     /* border-color: var(--primary-color); */

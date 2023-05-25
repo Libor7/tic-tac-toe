@@ -1,56 +1,52 @@
 /** LIBRARIES */
-import React, { FC, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useCallback, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 /** STYLES */
 import classes from "./Board.module.css";
 
 /** CUSTOM */
-import { RootState } from "../../store";
+import { RootState, gridActions, iconActions } from "../../store";
 
 /** CUSTOM COMPONENTS */
 import Grid from "../grid/Grid";
 
-interface BoardProps {
-  parentWidth: number;
-  parentHeight: number;
-}
+const Board = () => {
+  const boardWrapper = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
+  const { squareSide, tabletBreakpoint } = useSelector((state: RootState) => ({
+    squareSide: state.globalVars.squareSide,
+    tabletBreakpoint: state.globalVars.tabletBreakpoint,
+  }));
 
-const Board: FC<BoardProps> = (props) => {
-  const { parentWidth, parentHeight } = props;
-  // btn na posunutie resultBar z dola napravo - vedla seba zlava doprava: controlPanel, board, resultBar - či správne pridáva max columns a max rows
-  // 768 - modal zmenšiť
+  const tabletView = window.innerWidth >= tabletBreakpoint;
+  const gridPadding = tabletView ? 48 : 16;
 
-  const { buttonSide, resultBarHeight, tabletBreakpoint } = useSelector(
-    (state: RootState) => ({
-      buttonSide: state.globalVars.buttonSide,
-      resultBarHeight: state.globalVars.resultBarHeight,
-      tabletBreakpoint: state.globalVars.tabletBreakpoint,
-    })
-  );
-  const [boardHeight, setBoardHeight] = useState<number>();
+  const onViewportResize = useCallback(() => {
+    if (boardWrapper.current) {
+      const width = boardWrapper.current?.offsetWidth - gridPadding;
+      const height = boardWrapper.current?.offsetHeight - gridPadding;
+      const maxGridCols = Math.trunc(width / squareSide);
+      const maxGridRws = Math.trunc(height / squareSide);
+      dispatch(gridActions.setMaxGridColumns(maxGridCols));
+      dispatch(gridActions.setMaxGridRows(maxGridRws));
+      dispatch(gridActions.setNewGame({ cols: 3, rows: 3 }));
+      dispatch(iconActions.hideAllControls());
+    }
+  }, [dispatch, gridPadding, squareSide]);
+
+  window.addEventListener("resize", onViewportResize);
 
   useEffect(() => {
-    if (resultBarHeight > 0) {
-      const height =
-        window.innerWidth >= tabletBreakpoint
-          ? window.innerHeight - resultBarHeight
-          : window.innerHeight - buttonSide - resultBarHeight;
-      setBoardHeight(height);
-    }
-  }, [
-    buttonSide,
-    parentHeight,
-    parentWidth,
-    resultBarHeight,
-    tabletBreakpoint,
-  ]);
+    onViewportResize();
+
+    return () => {
+      window.removeEventListener("resize", onViewportResize);
+    };
+  }, [dispatch, onViewportResize]);
 
   return (
-    <div
-      className={`${classes["board-base"]}`}
-      style={{ height: `${boardHeight}px` }}
-    >
+    <div className={`${classes["board-base"]}`} ref={boardWrapper}>
       <Grid />
     </div>
   );

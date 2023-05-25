@@ -1,38 +1,54 @@
 /** LIBRARIES */
 import React, { FC } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 /** STYLES */
 import classes from "./Square.module.css";
 
+/** MODELS */
+import { SquareStatus } from "../../models/Square";
+
+/** CUSTOM COMPONENTS */
+import Mark from "../mark/Mark";
+
 /** CUSTOM */
-import { RootState } from "../../store";
-import { setSquareClasses } from "../../util/util";
+import { RootState, gridActions, resultActions } from "../../store";
+import { getSquareValue, setSquareClasses } from "../../util/util";
 
 interface SquareProps {
   xAxis: number;
   yAxis: number;
+  markIndex: SquareStatus;
 }
 
 const Square: FC<SquareProps> = (props) => {
-  const { xAxis, yAxis } = props;
-  const { columns, rows, squareSide } = useSelector((state: RootState) => ({
+  const { xAxis, yAxis, markIndex } = props;
+  const dispatch = useDispatch();
+  const { columns, grid, moves, rows, squareSide } = useSelector((state: RootState) => ({
     columns: state.grid.gridColumns,
+    grid: state.grid.grid,
+    moves: state.result.moves,
     rows: state.grid.gridRows,
-    squareSide: state.globalVars.squareSide
+    squareSide: state.globalVars.squareSide,
   }));
   const squareClasses = setSquareClasses({xAxis, yAxis, columns, rows}).map((cls: string) => `${classes[cls]}`).join(" ");
+  const mark = moves === 'cross' ? SquareStatus.CROSS : SquareStatus.CIRCLE;
 
-  const clickedSquareHandler = () => {};
+  const clickedSquareHandler = () => {
+    if (getSquareValue(xAxis, yAxis, grid) === SquareStatus.EMPTY) {
+      dispatch(gridActions.setSquareValue({row: yAxis, col: xAxis, value: mark}));
+      dispatch(resultActions.toggleWhoMoves());
+    }
+  };
 
   return (
     <div
       className={squareClasses}
       style={{ width: squareSide, height: squareSide }}
-      data-col={xAxis}
-      data-row={yAxis}
       onClick={clickedSquareHandler}
-    ></div>
+    >
+      <Mark markIndex={markIndex} />
+    </div>
   );
 };
 

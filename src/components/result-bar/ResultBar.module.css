@@ -1,0 +1,6 @@
+.result-bar-base {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  box-sizing: border-box;
+}

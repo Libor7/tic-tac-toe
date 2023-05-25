@@ -10,7 +10,7 @@ import {
 } from "../models/State";
 
 /** CUSTOM */
-import { setNewGrid } from "../util/util";
+import { getSquareValue, setNewGrid, setSquare } from "../util/util";
 
 const initialIconState: IconState = {
   allControlsDisplayed: false,
@@ -30,7 +30,17 @@ const initialResultState: ResultState = {
   computerPlaysAs: "nought",
   noughtsPlayerPoints: 0,
   crossesPlayerPoints: 0,
-  starts: "cross",
+  moves: "cross",
+  marks: [
+    {
+      label: "cross",
+      name: "close",
+    },
+    {
+      label: "nought",
+      name: "radio_button_unchecked",
+    },
+  ],
 };
 
 const initialGlobalVariablesState: GlobalVariablesState = {
@@ -44,10 +54,6 @@ const initialGlobalVariablesState: GlobalVariablesState = {
   buttonSide: 64,
   /** Size in px */
   squareSide: 58,
-  /** Size in px */
-  controlPanelWidth: 0,
-  /** Size in px */
-  resultBarHeight: 0,
 };
 
 const iconSlice = createSlice({
@@ -117,28 +123,48 @@ const gridSlice = createSlice({
         maxGridColumns: action.payload as number,
       };
     },
-    setNewGame(state) {
+    setNewGame(state, action) {
       return {
         ...state,
-        grid: setNewGrid(3, 3),
+        grid: setNewGrid(action.payload.cols, action.payload.rows),
         lastMove: null,
-        gridRows: 3,
-        gridColumns: 3,
+        gridColumns: action.payload.cols,
+        gridRows: action.payload.rows,
       };
     },
-    setSquareValue() {
-      // zmeniť hodnotu square - možno aj undoLastMove(state) - utils.ts možno
-      // return {
-      //   ...state,
-      //   grid:
-      // };
+    setSquareValue(state, action) {
+      return {
+        ...state,
+        grid: setSquare(
+          action.payload.col,
+          action.payload.row,
+          action.payload.value,
+          [...state.grid]
+        ),
+        lastMove: {
+          square: {
+            xAxis: action.payload.col,
+            yAxis: action.payload.row,
+          },
+          previousVal: getSquareValue(
+            action.payload.col,
+            action.payload.row,
+            state.grid
+          ),
+        },
+      };
     },
     undoLastMove(state) {
-      // zmeniť hodnotu v grid podla lastMove
-      // return {
-      //   ...state,
-      //   grid:
-      // };
+      return {
+        ...state,
+        grid: setSquare(
+          state.lastMove?.square.xAxis!,
+          state.lastMove?.square.yAxis!,
+          state.lastMove?.previousVal!,
+          [...state.grid]
+        ),
+        lastMove: null,
+      };
     },
   },
 });
@@ -153,26 +179,19 @@ const resultSlice = createSlice({
         playAgainstComp: !state.playAgainstComp,
       };
     },
+    toggleWhoMoves(state) {
+      return {
+        ...state,
+        moves: state.moves === 'cross' ? 'nought' : 'cross',
+      };
+    },
   },
 });
 
 const globalVariablesSlice = createSlice({
   name: "globalVars",
   initialState: initialGlobalVariablesState,
-  reducers: {
-    setControlPanelWidth(state, action) {
-      return {
-        ...state,
-        controlPanelWidth: action.payload as number,
-      };
-    },
-    setResultBarHeight(state, action) {
-      return {
-        ...state,
-        resultBarHeight: action.payload as number,
-      };
-    },
-  },
+  reducers: {},
 });
 
 const store = configureStore({

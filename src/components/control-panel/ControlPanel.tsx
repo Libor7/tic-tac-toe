@@ -1,5 +1,5 @@
 /** LIBRARIES */
-import React, { FC, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CSSTransition from "react-transition-group/CSSTransition";
 
@@ -10,12 +10,7 @@ import classes from "./ControlPanel.module.css";
 import { Icon } from "../../models/Icon";
 
 /** CUSTOM */
-import {
-  globalVariablesActions,
-  gridActions,
-  iconActions,
-  RootState,
-} from "../../store/index";
+import { gridActions, iconActions, resultActions, RootState } from "../../store/index";
 
 /** CUSTOM COMPONENTS */
 import Buttons from "../buttons/Buttons";
@@ -23,40 +18,32 @@ import Modal from "../ui/modal/Modal";
 
 const ControlPanel = () => {
   // const nodeRef = useRef(null);   // TODO animácia
-  const wrappedDiv = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const {
     allControlsDisplayed,
-    buttonSide,
-    controlPanelWidth,
     gridColumns,
     gridRows,
+    largeMobileBreakpoint,
+    lastMove,
     maxGridColumns,
     maxGridRows,
-    largeMobileBreakpoint,
-    resultBarHeight,
-    squareSide,
     tabletBreakpoint,
   } = useSelector((state: RootState) => ({
     allControlsDisplayed: state.icons.allControlsDisplayed,
-    buttonSide: state.globalVars.buttonSide,
-    controlPanelWidth: state.globalVars.controlPanelWidth,
     gridColumns: state.grid.gridColumns,
     gridRows: state.grid.gridRows,
+    largeMobileBreakpoint: state.globalVars.largeMobileBreakpoint,
+    lastMove: state.grid.lastMove,
     maxGridColumns: state.grid.maxGridColumns,
     maxGridRows: state.grid.maxGridRows,
-    largeMobileBreakpoint: state.globalVars.largeMobileBreakpoint,
-    resultBarHeight: state.globalVars.resultBarHeight,
-    squareSide: state.globalVars.squareSide,
     tabletBreakpoint: state.globalVars.tabletBreakpoint,
   }));
 
   const largeMobileView = window.innerWidth >= largeMobileBreakpoint;
   const tabletView = window.innerWidth >= tabletBreakpoint;
-  const gridPadding = tabletView ? 48 : 16;
   const modalBtnsInRow = largeMobileView ? 3 : 2;
 
-  // TODO skúsiť presunúť do osobitného súboru iconList - dispatch: Dispatch<> 
+  // TODO skúsiť presunúť do osobitného súboru iconList - dispatch: Dispatch<>
   const iconList: Icon[] = useMemo(
     () => [
       {
@@ -64,14 +51,22 @@ const ControlPanel = () => {
         name: "tag",
         control: true,
         initialControl: true,
-        clickHandler: () => dispatch(gridActions.setNewGame()),
+        clickHandler: () => {
+          dispatch(gridActions.setNewGame({ cols: gridColumns, rows: gridRows }));
+          dispatch(iconActions.hideAllControls());
+        },
       },
       {
         label: "Take back move",
         name: "undo",
         control: true,
         initialControl: true,
-        clickHandler: () => console.log("Last move"),
+        clickHandler: () => {
+          if (lastMove !== null) {
+            dispatch(gridActions.undoLastMove());
+            dispatch(resultActions.toggleWhoMoves());
+          }
+        },
       },
       {
         label: "Remove column",
@@ -114,63 +109,12 @@ const ControlPanel = () => {
           dispatch(iconActions.showAllControls());
         },
       },
-      {
-        name: "close",
-        control: false,
-      },
-      {
-        name: "radio_button_unchecked",
-        control: false,
-      },
     ],
-    [dispatch, gridColumns, gridRows, maxGridColumns, maxGridRows]
+    [dispatch, gridColumns, gridRows, lastMove, maxGridColumns, maxGridRows]
   );
 
-  const closeModalHandler = useCallback(() => {
-    dispatch(iconActions.hideAllControls());
-  }, [dispatch]);
-
-  const onViewportResize = useCallback(() => {
-    const width = tabletView
-      ? window.innerWidth - controlPanelWidth - gridPadding
-      : window.innerWidth - gridPadding;
-    const height = tabletView
-      ? window.innerHeight - resultBarHeight - gridPadding
-      : window.innerHeight - buttonSide - resultBarHeight - gridPadding;
-    const maxGridCols = Math.trunc(width / squareSide);
-    const maxGridRws = Math.trunc(height / squareSide);
-    dispatch(gridActions.setMaxGridColumns(maxGridCols));
-    dispatch(gridActions.setMaxGridRows(maxGridRws));
-    dispatch(gridActions.setNewGame());
-    closeModalHandler();
-  }, [
-    buttonSide,
-    closeModalHandler,
-    controlPanelWidth,
-    tabletView,
-    dispatch,
-    gridPadding,
-    resultBarHeight,
-    squareSide,
-  ]);
-
-  window.addEventListener("resize", onViewportResize);
-
-  useEffect(() => {
-    onViewportResize();
-    dispatch(
-      globalVariablesActions.setControlPanelWidth(
-        wrappedDiv.current?.offsetWidth
-      )
-    );
-
-    return () => {
-      window.removeEventListener("resize", onViewportResize);
-    };
-  }, [dispatch, onViewportResize]);
-
   return (
-    <div ref={wrappedDiv}>
+    <>
       {tabletView && <Buttons icons={iconList} initial={false} inRow={1} />}
       {!tabletView && <Buttons icons={iconList} initial={true} inRow={3} />}
       {/* <CSSTransition
@@ -192,11 +136,11 @@ const ControlPanel = () => {
         </Modal>
       </CSSTransition> */}
       {allControlsDisplayed && (
-        <Modal onModalClose={closeModalHandler}>
+        <Modal>
           <Buttons icons={iconList} initial={false} inRow={modalBtnsInRow} />
         </Modal>
       )}
-    </div>
+    </>
   );
 };
 

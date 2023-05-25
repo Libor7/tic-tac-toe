@@ -24,9 +24,7 @@
   animation: slide-up 500ms ease-out forwards;
 } */
 
-.modal-overlay-enter {
-  
-}
+.modal-overlay-enter {}
 
 .modal-overlay-enter-active {
   animation: slide-down 500ms ease-out forwards;

@@ -1,11 +1,12 @@
-import { PreviousMove } from "./Square";
+import { Mark } from "./Icon";
+import { PreviousMove, SquareStatus } from "./Square";
 
 export interface IconState {
   allControlsDisplayed: boolean;
 }
 
 export interface GridState {
-  grid: number[][];
+  grid: SquareStatus[][];
   lastMove: PreviousMove | null;
   gridRows: number;
   gridColumns: number;
@@ -18,7 +19,8 @@ export interface ResultState {
   computerPlaysAs: string;
   noughtsPlayerPoints: number;
   crossesPlayerPoints: number;
-  starts: string;
+  moves: "cross" | "nought";
+  marks: Mark[];
 }
 
 export interface GlobalVariablesState {
@@ -27,6 +29,4 @@ export interface GlobalVariablesState {
   desktopBreakpoint: number;
   buttonSide: number;
   squareSide: number;
-  controlPanelWidth: number;
-  resultBarHeight: number;
 }

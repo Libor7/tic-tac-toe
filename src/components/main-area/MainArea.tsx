@@ -1,36 +1,19 @@
 /** LIBRARIES */
 import React from "react";
 
+/** STYLES */
+import classes from "./MainArea.module.css";
+
 /** CUSTOM COMPONENTS */
 import Board from "../board/Board";
 import ResultBar from "../result-bar/ResultBar";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
 
 const MainArea = () => {
-  const { controlPanelWidth, tabletBreakpoint, buttonSide } = useSelector(
-    (state: RootState) => ({
-      buttonSide: state.globalVars.buttonSide,
-      controlPanelWidth: state.globalVars.controlPanelWidth,
-      tabletBreakpoint: state.globalVars.tabletBreakpoint,
-    })
-  );
-
-  const containerWidth =
-    window.innerWidth >= tabletBreakpoint
-      ? window.innerWidth - controlPanelWidth
-      : window.innerWidth;
-
-  const containerHeight =
-    window.innerWidth >= tabletBreakpoint
-      ? window.innerHeight
-      : window.innerHeight - buttonSide;
+  // TODO btn posunutie resultBar z dola napravo - vedla seba zlava doprava: controlPanel, board, resultBar 
 
   return (
-    <div
-      style={{ width: `${containerWidth}px`, height: `${containerHeight}px` }}
-    >
-      <Board parentHeight={containerHeight} parentWidth={containerWidth} />
+    <div className={`${classes["main-area-base"]}`}>
+      <Board />
       <ResultBar />
     </div>
   );

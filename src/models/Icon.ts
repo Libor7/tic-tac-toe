@@ -5,3 +5,8 @@ export interface Icon {
     initialControl?: boolean;
     clickHandler?: () => void;
 }
+
+export interface Mark {
+    label: string;
+    name: string;
+}

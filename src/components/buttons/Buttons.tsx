@@ -24,9 +24,10 @@ interface ButtonsProps {
 
 const Buttons: FC<ButtonsProps> = (props) => {
   const { icons, initial, inRow } = props;
-  const { buttonSide, desktopBreakpoint } = useSelector((state: RootState) => ({
+  const { buttonSide, desktopBreakpoint, lastMove } = useSelector((state: RootState) => ({
     buttonSide: state.globalVars.buttonSide,
     desktopBreakpoint: state.globalVars.desktopBreakpoint,
+    lastMove: state.grid.lastMove
   }));
 
   const desktopView = window.innerWidth >= desktopBreakpoint;
@@ -38,10 +39,10 @@ const Buttons: FC<ButtonsProps> = (props) => {
         .filter((icon: IconModel) =>
           initial
             ? icon.initialControl
-            : icon.control && icon.name !== "more_vert"
+            : icon.name !== "more_vert"
         )
         .map((icon: IconModel) => (
-          <Button key={icon.name} onClick={icon.clickHandler!}>
+          <Button key={icon.name} onClick={icon.clickHandler!} disabled={!lastMove && icon.name === 'undo'}>
             <Icon name={icon.name} />
             {desktopView && <ButtonLabel labelText={icon.label ?? ""} />}
           </Button>

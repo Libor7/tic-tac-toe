@@ -14,15 +14,16 @@ import GridRow from "../grid-row/GridRow";
 interface GridProps {}
 
 const Grid: FC<GridProps> = (props) => {
-  const { columns, rows } = useSelector((state: RootState) => ({
+  const { columns, grid, rows } = useSelector((state: RootState) => ({
     columns: state.grid.gridColumns,
+    grid: state.grid.grid,
     rows: state.grid.gridRows,
   }));
 
   return (
     <div className={`${classes['grid-base']}`}>
-      {Array.from(Array(rows).keys()).map((row) => (
-        <GridRow key={row} rowIndex={row} cols={columns} />
+      {Array.from(Array(rows).keys()).map((row, index) => (
+        <GridRow key={row} rowIndex={row} cols={columns} rowValues={grid[index]} />
       ))}
     </div>
   );
