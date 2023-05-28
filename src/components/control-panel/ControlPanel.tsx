@@ -10,7 +10,12 @@ import classes from "./ControlPanel.module.css";
 import { Icon } from "../../models/Icon";
 
 /** CUSTOM */
-import { gridActions, iconActions, resultActions, RootState } from "../../store/index";
+import {
+  gridActions,
+  iconActions,
+  resultActions,
+  RootState,
+} from "../../store/index";
 
 /** CUSTOM COMPONENTS */
 import Buttons from "../buttons/Buttons";
@@ -52,8 +57,11 @@ const ControlPanel = () => {
         control: true,
         initialControl: true,
         clickHandler: () => {
-          dispatch(gridActions.setNewGame({ cols: gridColumns, rows: gridRows }));
+          dispatch(
+            gridActions.setNewGame({ cols: gridColumns, rows: gridRows })
+          );
           dispatch(iconActions.hideAllControls());
+          dispatch(resultActions.setWhoMoves("cross"));
         },
       },
       {
@@ -73,7 +81,10 @@ const ControlPanel = () => {
         name: "chevron_left",
         control: true,
         clickHandler: () => {
-          if (gridColumns > 3) dispatch(gridActions.decrementGridColumns());
+          if (gridColumns > 3) {
+            dispatch(gridActions.decrementGridColumns());
+            dispatch(resultActions.setWhoMoves("cross"));
+          }
         },
       },
       {
@@ -81,8 +92,10 @@ const ControlPanel = () => {
         name: "chevron_right",
         control: true,
         clickHandler: () => {
-          if (gridColumns < maxGridColumns)
+          if (gridColumns < maxGridColumns) {
             dispatch(gridActions.incrementGridColumns());
+            dispatch(resultActions.setWhoMoves("cross"));
+          }
         },
       },
       {
@@ -90,7 +103,10 @@ const ControlPanel = () => {
         name: "expand_more",
         control: true,
         clickHandler: () => {
-          if (gridRows < maxGridRows) dispatch(gridActions.incrementGridRows());
+          if (gridRows < maxGridRows) {
+            dispatch(gridActions.incrementGridRows());
+            dispatch(resultActions.setWhoMoves("cross"));
+          }
         },
       },
       {
@@ -98,7 +114,10 @@ const ControlPanel = () => {
         name: "expand_less",
         control: true,
         clickHandler: () => {
-          if (gridRows > 3) dispatch(gridActions.decrementGridRows());
+          if (gridRows > 3) {
+            dispatch(gridActions.decrementGridRows());
+            dispatch(resultActions.setWhoMoves('cross'));
+          }
         },
       },
       {

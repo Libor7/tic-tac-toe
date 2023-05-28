@@ -16,7 +16,7 @@ const initialIconState: IconState = {
   allControlsDisplayed: false,
 };
 
-const initialGridState: GridState = {
+const initialGridState: GridState = {           // TODO Splitting Our Code poznamky , kto má viac bodov vysvietiť na zeleno, prehrávajúci na červeno 
   grid: setNewGrid(3, 3),
   lastMove: null,
   gridRows: 3,
@@ -41,6 +41,7 @@ const initialResultState: ResultState = {
       name: "radio_button_unchecked",
     },
   ],
+  waitingForEngineResponse: false,
 };
 
 const initialGlobalVariablesState: GlobalVariablesState = {
@@ -173,10 +174,22 @@ const resultSlice = createSlice({
   name: "results",
   initialState: initialResultState,
   reducers: {
+    setWhoMoves(state, action) {
+      return {
+        ...state,
+        moves: action.payload,
+      };
+    },
     toggleOpponent(state) {
       return {
         ...state,
         playAgainstComp: !state.playAgainstComp,
+      };
+    },
+    toggleOwnMark(state) {
+      return {
+        ...state,
+        computerPlaysAs: state.computerPlaysAs === 'nought' ? 'cross' : 'nought',
       };
     },
     toggleWhoMoves(state) {
@@ -185,6 +198,12 @@ const resultSlice = createSlice({
         moves: state.moves === 'cross' ? 'nought' : 'cross',
       };
     },
+    toggleWaitingForEngineResponse(state) {
+      return {
+        ...state,
+        waitingForEngineResponse: !state.waitingForEngineResponse,
+      };
+    }
   },
 });
 

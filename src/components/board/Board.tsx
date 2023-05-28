@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import classes from "./Board.module.css";
 
 /** CUSTOM */
-import { RootState, gridActions, iconActions } from "../../store";
+import { RootState, gridActions, iconActions, resultActions } from "../../store";
 
 /** CUSTOM COMPONENTS */
 import Grid from "../grid/Grid";
@@ -32,6 +32,7 @@ const Board = () => {
       dispatch(gridActions.setMaxGridRows(maxGridRws));
       dispatch(gridActions.setNewGame({ cols: 3, rows: 3 }));
       dispatch(iconActions.hideAllControls());
+      dispatch(resultActions.setWhoMoves('cross'));
     }
   }, [dispatch, gridPadding, squareSide]);
 

@@ -10,6 +10,7 @@ import { Icon as IconModel } from "../../models/Icon";
 
 /** CUSTOM */
 import { RootState } from "../../store";
+import { getFlattenArray, isGridEmpty } from "../../services/engineService";
 
 /** CUSTOM COMPONENTS */
 import Button from "../ui/button/Button";
@@ -24,25 +25,54 @@ interface ButtonsProps {
 
 const Buttons: FC<ButtonsProps> = (props) => {
   const { icons, initial, inRow } = props;
-  const { buttonSide, desktopBreakpoint, lastMove } = useSelector((state: RootState) => ({
+  const {
+    buttonSide,
+    desktopBreakpoint,
+    grid,
+    gridColumns,
+    gridRows,
+    lastMove,
+    maxGridColumns,
+    maxGridRows,
+    playAgainstComp
+  } = useSelector((state: RootState) => ({
     buttonSide: state.globalVars.buttonSide,
     desktopBreakpoint: state.globalVars.desktopBreakpoint,
-    lastMove: state.grid.lastMove
+    grid: state.grid.grid,
+    gridColumns: state.grid.gridColumns,
+    gridRows: state.grid.gridRows,
+    lastMove: state.grid.lastMove,
+    maxGridColumns: state.grid.maxGridColumns,
+    maxGridRows: state.grid.maxGridRows,
+    playAgainstComp: state.result.playAgainstComp,
   }));
 
   const desktopView = window.innerWidth >= desktopBreakpoint;
-  const buttonsWidth = desktopView ? 'unset' : inRow * buttonSide + 'px';
+  const buttonsWidth = desktopView ? "unset" : inRow * buttonSide + "px";
+  const allSquaresEmpty = isGridEmpty(getFlattenArray(grid));
 
   return (
-    <div className={`${classes["buttons-base"]}`} style={{ width: buttonsWidth }}>
+    <div
+      className={`${classes["buttons-base"]}`}
+      style={{ width: buttonsWidth }}
+    >
       {icons
         .filter((icon: IconModel) =>
-          initial
-            ? icon.initialControl
-            : icon.name !== "more_vert"
+          initial ? icon.initialControl : icon.name !== "more_vert"
         )
         .map((icon: IconModel) => (
-          <Button key={icon.name} onClick={icon.clickHandler!} disabled={!lastMove && icon.name === 'undo'}>
+          <Button
+            key={icon.name}
+            onClick={icon.clickHandler!}
+            disabled={
+              ((!lastMove || playAgainstComp) && icon.name === "undo") ||
+              (gridColumns === 3 && icon.name === "chevron_left") ||
+              (gridColumns === maxGridColumns && icon.name === "chevron_right") ||
+              (gridRows === 3 && icon.name === "expand_less") ||
+              (gridRows === maxGridRows && icon.name === "expand_more") ||
+              (allSquaresEmpty && icon.name === "tag")
+            }
+          >
             <Icon name={icon.name} />
             {desktopView && <ButtonLabel labelText={icon.label ?? ""} />}
           </Button>

@@ -9,7 +9,11 @@ interface IconProps {
 const Icon: FC<IconProps> = (props) => {
   const { name, font } = props;
   const iconClasses = `material-icons ${classes["icon-base"]} ${
-    font && font === "large" ? classes["large"] : classes["medium"]
+    font && font === "large"
+      ? classes["large"]
+      : font === "medium"
+      ? classes["medium"]
+      : null
   }`;
 
   return <i className={iconClasses}>{name}</i>;

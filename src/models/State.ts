@@ -16,11 +16,12 @@ export interface GridState {
 
 export interface ResultState {
   playAgainstComp: boolean;
-  computerPlaysAs: string;
+  computerPlaysAs: "cross" | "nought";
   noughtsPlayerPoints: number;
   crossesPlayerPoints: number;
   moves: "cross" | "nought";
   marks: Mark[];
+  waitingForEngineResponse: boolean;
 }
 
 export interface GlobalVariablesState {
