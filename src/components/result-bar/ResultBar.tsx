@@ -13,12 +13,12 @@ const ResultBar = () => {
   const {
     gridColumns,
     gridRows,
-    computerPlaysAs,
+    engineStarts,
     crossesPlayerPoints,
     noughtsPlayerPoints,
     playAgainstComp,
   } = useSelector((state: RootState) => ({
-    computerPlaysAs: state.result.computerPlaysAs,
+    engineStarts: state.result.engineStarts,
     crossesPlayerPoints: state.result.crossesPlayerPoints,
     gridColumns: state.grid.gridColumns,
     gridRows: state.grid.gridRows,
@@ -28,13 +28,17 @@ const ResultBar = () => {
 
   const opponentHandler = useCallback(() => {
     dispatch(resultActions.toggleOpponent());
+    dispatch(gridActions.clearClickedSquare());
     dispatch(gridActions.setNewGame({ cols: gridColumns, rows: gridRows }));
-    dispatch(resultActions.setWhoMoves('cross'));
+    dispatch(resultActions.setWhoMoves("cross"));
   }, [dispatch, gridColumns, gridRows]);
 
-  const ownMarkHandler = useCallback(() => {
-    dispatch(resultActions.toggleOwnMark());
-  }, [dispatch]);
+  const whoBeginsHandler = useCallback(() => {
+    dispatch(resultActions.toggleWhoBegins());
+    dispatch(gridActions.setNewGame({ cols: gridColumns, rows: gridRows }));
+    dispatch(gridActions.clearClickedSquare());
+    dispatch(resultActions.setWhoMoves("cross"));
+  }, [dispatch, gridColumns, gridRows]);
 
   return (
     <div className={`${classes["result-bar-base"]}`}>
@@ -45,14 +49,14 @@ const ResultBar = () => {
       <div className={`${classes["result-bar-checkbox-wrapper"]}`}>
         <div>
           <span>Against {playAgainstComp ? "Engine" : "Human"}</span>
-          <input type="checkbox" onChange={opponentHandler} />
+          <input id ="opponentId" type="checkbox" onChange={opponentHandler} />
         </div>
-        <div>
-          <span>
-            Playing as {computerPlaysAs === "nought" ? "cross" : "nought"}
-          </span>
-          <input type="checkbox" onChange={ownMarkHandler} />
-        </div>
+        {playAgainstComp && (
+          <div>
+            <span>You play as {engineStarts ? "nought" : "cross"}</span>
+            <input id ="markId" type="checkbox" onChange={whoBeginsHandler} />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -18,6 +18,7 @@ const initialIconState: IconState = {
 
 const initialGridState: GridState = {           // TODO Splitting Our Code poznamky , kto má viac bodov vysvietiť na zeleno, prehrávajúci na červeno 
   grid: setNewGrid(3, 3),
+  clickedSquare: null,
   lastMove: null,
   gridRows: 3,
   gridColumns: 3,
@@ -26,8 +27,9 @@ const initialGridState: GridState = {           // TODO Splitting Our Code pozna
 };
 
 const initialResultState: ResultState = {
+  endOfGameFlag: false,
   playAgainstComp: false,
-  computerPlaysAs: "nought",
+  engineStarts: false,
   noughtsPlayerPoints: 0,
   crossesPlayerPoints: 0,
   moves: "cross",
@@ -167,6 +169,21 @@ const gridSlice = createSlice({
         lastMove: null,
       };
     },
+    setClickedSquare(state, action) {
+      return {
+        ...state,
+        clickedSquare: {
+          xAxis: action.payload.x,
+          yAxis: action.payload.y,
+        },
+      };
+    },
+    clearClickedSquare(state) {
+      return {
+        ...state,
+        clickedSquare: null,
+      };
+    },
   },
 });
 
@@ -174,6 +191,18 @@ const resultSlice = createSlice({
   name: "results",
   initialState: initialResultState,
   reducers: {
+    setEndOfGame(state, action) {
+      return {
+        ...state,
+        endOfGameFlag: action.payload,
+      };
+    },
+    setWaitingForEngineResponse(state, action) {
+      return {
+        ...state,
+        waitingForEngineResponse: action.payload,
+      };
+    },
     setWhoMoves(state, action) {
       return {
         ...state,
@@ -186,10 +215,10 @@ const resultSlice = createSlice({
         playAgainstComp: !state.playAgainstComp,
       };
     },
-    toggleOwnMark(state) {
+    toggleWhoBegins(state) {
       return {
         ...state,
-        computerPlaysAs: state.computerPlaysAs === 'nought' ? 'cross' : 'nought',
+        engineStarts: !state.engineStarts,
       };
     },
     toggleWhoMoves(state) {
@@ -198,12 +227,6 @@ const resultSlice = createSlice({
         moves: state.moves === 'cross' ? 'nought' : 'cross',
       };
     },
-    toggleWaitingForEngineResponse(state) {
-      return {
-        ...state,
-        waitingForEngineResponse: !state.waitingForEngineResponse,
-      };
-    }
   },
 });
 

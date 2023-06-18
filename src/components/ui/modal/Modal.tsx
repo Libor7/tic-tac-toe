@@ -1,7 +1,6 @@
 /** LIBRARIES */
 import React, { FC } from "react";
 import ReactDOM from "react-dom";
-import { useDispatch } from "react-redux";
 
 /** STYLES */
 import classes from "./Modal.module.css";
@@ -18,21 +17,17 @@ const overlayElement = document.getElementById("overlay-root")!;
 
 interface ModalProps {
   children: React.ReactNode;
+  closeHandler: () => void;
 }
 
 const Modal: FC<ModalProps> = (props) => {
-  const { children } = props;
-  const dispatch = useDispatch();
-
-  const modalCloseHandler = () => {
-    dispatch(iconActions.hideAllControls());
-  };
+  const { children, closeHandler } = props;
 
   return (
     <>
       {ReactDOM.createPortal(<Backdrop onClick={() => {}} />, backdropElement)}
       {ReactDOM.createPortal(
-        <ModalOverlay onModalClose={modalCloseHandler}>
+        <ModalOverlay onModalClose={closeHandler}>
           {children}
         </ModalOverlay>,
         overlayElement

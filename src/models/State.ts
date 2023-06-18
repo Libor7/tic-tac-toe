@@ -1,5 +1,5 @@
 import { Mark } from "./Icon";
-import { PreviousMove, SquareStatus } from "./Square";
+import { PreviousMove, SquareCoordinates, SquareStatus } from "./Square";
 
 export interface IconState {
   allControlsDisplayed: boolean;
@@ -7,6 +7,7 @@ export interface IconState {
 
 export interface GridState {
   grid: SquareStatus[][];
+  clickedSquare: SquareCoordinates | null;
   lastMove: PreviousMove | null;
   gridRows: number;
   gridColumns: number;
@@ -15,8 +16,9 @@ export interface GridState {
 }
 
 export interface ResultState {
+  endOfGameFlag: boolean;
   playAgainstComp: boolean;
-  computerPlaysAs: "cross" | "nought";
+  engineStarts: boolean;
   noughtsPlayerPoints: number;
   crossesPlayerPoints: number;
   moves: "cross" | "nought";

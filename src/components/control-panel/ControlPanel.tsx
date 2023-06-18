@@ -26,6 +26,7 @@ const ControlPanel = () => {
   const dispatch = useDispatch();
   const {
     allControlsDisplayed,
+    endOfGameFlag,
     gridColumns,
     gridRows,
     largeMobileBreakpoint,
@@ -35,6 +36,7 @@ const ControlPanel = () => {
     tabletBreakpoint,
   } = useSelector((state: RootState) => ({
     allControlsDisplayed: state.icons.allControlsDisplayed,
+    endOfGameFlag: state.result.endOfGameFlag,
     gridColumns: state.grid.gridColumns,
     gridRows: state.grid.gridRows,
     largeMobileBreakpoint: state.globalVars.largeMobileBreakpoint,
@@ -62,6 +64,7 @@ const ControlPanel = () => {
           );
           dispatch(iconActions.hideAllControls());
           dispatch(resultActions.setWhoMoves("cross"));
+          dispatch(resultActions.setWaitingForEngineResponse(false));
         },
       },
       {
@@ -116,7 +119,7 @@ const ControlPanel = () => {
         clickHandler: () => {
           if (gridRows > 3) {
             dispatch(gridActions.decrementGridRows());
-            dispatch(resultActions.setWhoMoves('cross'));
+            dispatch(resultActions.setWhoMoves("cross"));
           }
         },
       },
@@ -131,6 +134,16 @@ const ControlPanel = () => {
     ],
     [dispatch, gridColumns, gridRows, lastMove, maxGridColumns, maxGridRows]
   );
+
+  const hideControlsHandler = () => {
+    dispatch(iconActions.hideAllControls());
+  };
+
+  const closeGameOverHandler = () => {
+    dispatch(resultActions.setEndOfGame(false));
+    dispatch(gridActions.setNewGame({ cols: gridColumns, rows: gridRows }));
+    dispatch(resultActions.setWaitingForEngineResponse(false));
+  };
 
   return (
     <>
@@ -155,9 +168,12 @@ const ControlPanel = () => {
         </Modal>
       </CSSTransition> */}
       {allControlsDisplayed && (
-        <Modal>
+        <Modal closeHandler={hideControlsHandler}>
           <Buttons icons={iconList} initial={false} inRow={modalBtnsInRow} />
         </Modal>
+      )}
+      {endOfGameFlag && (
+        <Modal closeHandler={closeGameOverHandler}>Game over</Modal>
       )}
     </>
   );
