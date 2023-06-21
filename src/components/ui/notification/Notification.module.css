@@ -1,0 +1,38 @@
+.notification-base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+  /* background-color: var(--primary-color);
+    color: var(--secondary-color); */
+  font-weight: 400;
+  text-align: center;
+}
+
+.notification-size {
+  min-height: 150px;
+  min-width: 120px;
+  font-size: 2em;
+}
+
+@media (min-width: 600px) {
+  .notification-size {
+    min-height: 200px;
+    min-width: 250px;
+    font-size: 2.5em;
+  }
+}
+
+@media (min-width: 900px) {
+  .notification-size {
+    min-height: 200px;
+    min-width: 350px;
+  }
+}
+
+@media (min-width: 1200px) {
+    .notification-size {
+      min-height: 150px;
+      min-width: 450px;
+    }
+  }

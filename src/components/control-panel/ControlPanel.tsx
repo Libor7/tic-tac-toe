@@ -20,6 +20,7 @@ import {
 /** CUSTOM COMPONENTS */
 import Buttons from "../buttons/Buttons";
 import Modal from "../ui/modal/Modal";
+import Notification from "../ui/notification/Notification";
 
 const ControlPanel = () => {
   // const nodeRef = useRef(null);   // TODO animácia
@@ -141,7 +142,6 @@ const ControlPanel = () => {
 
   const closeGameOverHandler = () => {
     dispatch(resultActions.setEndOfGame(false));
-    dispatch(gridActions.setNewGame({ cols: gridColumns, rows: gridRows }));
     dispatch(resultActions.setWaitingForEngineResponse(false));
   };
 
@@ -168,12 +168,12 @@ const ControlPanel = () => {
         </Modal>
       </CSSTransition> */}
       {allControlsDisplayed && (
-        <Modal closeHandler={hideControlsHandler}>
+        <Modal closeHandler={hideControlsHandler} showCloseBtn={true}>
           <Buttons icons={iconList} initial={false} inRow={modalBtnsInRow} />
         </Modal>
       )}
       {endOfGameFlag && (
-        <Modal closeHandler={closeGameOverHandler}>Game over</Modal>
+        <Modal closeHandler={closeGameOverHandler} showCloseBtn={false}><Notification message="Game Over" /></Modal>
       )}
     </>
   );

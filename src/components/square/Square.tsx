@@ -57,11 +57,9 @@ const Square: FC<SquareProps> = (props) => {
         if (waitingForEngineResponse) return;
         dispatch(gridActions.setClickedSquare({ x: xAxis, y: yAxis }));
       }
-      // nájde polia, ktoré majú jeho znak a ktoré súperov znak - skontroluje všetky polia okolo
-      // prázdne vloží do množín - množina pre svoje a pre súperove - tieto sú uprednostnené pre náhodný výber pola ak táto množina obsahuje prvky,
-      // ak neobsahuje, vyberá náhodne podla prvého postupu (uprednostniť získanie bodu pred blokovaním súpera - prípadne nájsť tie, ktoré sú v oboch
-      // množinách a uprednostniť také)
-      // ak niektoré z polí okolo znaku má rovnaký znak, do tretej množiny, uprednostnenej pred predoslými
+      // polia s jeho a súperovym znak - skontroluje všetky polia okolo, prázdne vloží - množina pre svoje a pre súperove - uprednostnené pre náhodný výber pola ak táto množina 
+      // obsahuje prvky, ak neobsahuje, vyberá náhodne podla prvého postupu (uprednostniť získanie bodu pred blokovaním súpera - prípadne nájsť tie, ktoré sú v oboch množinách 
+      // ak niektoré z polí okolo znaku má rovnaký znak, do tretej množiny, uprednostnenej pred predoslými 
     }
   };
 

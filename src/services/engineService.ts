@@ -1,7 +1,5 @@
 import {
   Direction,
-  MarkedSquare,
-  NeighbouringSquare,
   SquareCoordinates,
   SquareStatus,
 } from "../models/Square";
@@ -10,19 +8,16 @@ import { getSquareValue } from "../util/util";
 /** Changeable time period for Engine thinking simulation */
 export const millisecondOptions = [500, 750, 1000, 1250, 1500, 1750];
 
-/**
- * After me making a move, the engine finds best possible response options and randomly chooses one of them
- * @param grid
- * @param engineMark
- * @returns Promise<SquareCoordinates>
- */
-export const getEngineResponse = (
-  grid: SquareStatus[][],
-  engineMark: SquareStatus
-): Promise<SquareCoordinates> => {
-  return new Promise((resolve, reject) => {
-    getMoveOptions(grid, engineMark);
-  });
+/** Mapping of directions to their opposite */
+export const oppositeDirection = {
+  Up: "Down",
+  UpRight: "DownLeft",
+  Right: "Left",
+  DownRight: "UpLeft",
+  Down: "Up",
+  DownLeft: "UpRight",
+  Left: "Right",
+  UpLeft: "DownRight",
 };
 
 /**
@@ -43,34 +38,16 @@ export const getFlattenArray = (grid: SquareStatus[][]) => {
   return grid.flat();
 };
 
-export const getItemOfIndex = () => {
-  // po vybratí uprednostneného array z neho náhodne vyberie prvok = koordináty pre square (interface SquareCoordinates) pre mark 
-};
-
-const getMoveOptions = (
-  grid: SquareStatus[][],
-  engineMark: SquareStatus
-) => {
-  const myMark = engineMark === SquareStatus.CIRCLE ? SquareStatus.CROSS : SquareStatus.CIRCLE;
-  const markedSquaresByMe = getSquaresWithMark(myMark, grid);
-  const markedSquaresByEngine = getSquaresWithMark(engineMark, grid);
-
-  // console.log(markedSquaresByMe, markedSquaresByEngine); // TODO - remove
-  const AllNeighbouringSquares = getAllNeighbouringSquares(
-    markedSquaresByMe,
-    myMark,
-    grid
-  );
-  console.log(AllNeighbouringSquares);
-};
-
 /**
  * Finds all squares with specific mark
  * @param mark
  * @param grid
  * @returns SquareCoordinates[]
  */
-const getSquaresWithMark = (mark: SquareStatus, grid: SquareStatus[][]) => {
+export const getSquaresWithMark = (
+  mark: SquareStatus,
+  grid: SquareStatus[][]
+) => {
   const markedSquares: SquareCoordinates[] = [];
   for (let i = 0; i < grid.length; i++) {
     for (let j = 0; j < grid[0].length; j++) {
@@ -110,9 +87,9 @@ export const isGridEmpty = (flattenGrid: SquareStatus[]) => {
 };
 
 /**
- * Returns true, if all grid squares are filled with values and there is no square with SquareStatus.EMPTY as a value 
- * @param flattenGrid 
- * @returns 
+ * Returns true, if all grid squares are filled with values and there is no square with SquareStatus.EMPTY as a value
+ * @param flattenGrid
+ * @returns
  */
 export const isGridFilled = (flattenGrid: SquareStatus[]) => {
   return !flattenGrid.some(
@@ -133,103 +110,189 @@ const squareExists = (xAxis: number, yAxis: number, grid: SquareStatus[][]) => {
   );
 };
 
-const getAllNeighbouringSquares = (
-  markedSquares: SquareCoordinates[],
+/** Methods for navigation in the grid. The input is a square we are currently on. It returns a square to which we move. Repetition decides how many times we want to move in that direction */
+const moveUp = (
+  currentSquare: SquareCoordinates,
+  repetition: number
+): SquareCoordinates => {
+  return {
+    xAxis: currentSquare.xAxis,
+    yAxis: currentSquare.yAxis - repetition * 1,
+  };
+};
+
+const moveUpRight = (
+  currentSquare: SquareCoordinates,
+  repetition: number
+): SquareCoordinates => {
+  return {
+    xAxis: currentSquare.xAxis + repetition * 1,
+    yAxis: currentSquare.yAxis - repetition * 1,
+  };
+};
+
+const moveRight = (
+  currentSquare: SquareCoordinates,
+  repetition: number
+): SquareCoordinates => {
+  return {
+    xAxis: currentSquare.xAxis + repetition * 1,
+    yAxis: currentSquare.yAxis,
+  };
+};
+
+const moveDownRight = (
+  currentSquare: SquareCoordinates,
+  repetition: number
+): SquareCoordinates => {
+  return {
+    xAxis: currentSquare.xAxis + repetition * 1,
+    yAxis: currentSquare.yAxis + repetition * 1,
+  };
+};
+
+const moveDown = (
+  currentSquare: SquareCoordinates,
+  repetition: number
+): SquareCoordinates => {
+  return {
+    xAxis: currentSquare.xAxis,
+    yAxis: currentSquare.yAxis + repetition * 1,
+  };
+};
+
+const moveDownLeft = (
+  currentSquare: SquareCoordinates,
+  repetition: number
+): SquareCoordinates => {
+  return {
+    xAxis: currentSquare.xAxis - repetition * 1,
+    yAxis: currentSquare.yAxis + repetition * 1,
+  };
+};
+
+const moveLeft = (
+  currentSquare: SquareCoordinates,
+  repetition: number
+): SquareCoordinates => {
+  return {
+    xAxis: currentSquare.xAxis - repetition * 1,
+    yAxis: currentSquare.yAxis,
+  };
+};
+
+const moveUpLeft = (
+  currentSquare: SquareCoordinates,
+  repetition: number
+): SquareCoordinates => {
+  return {
+    xAxis: currentSquare.xAxis - repetition * 1,
+    yAxis: currentSquare.yAxis - repetition * 1,
+  };
+};
+
+/**
+ * Find the same square coordinates in two arrays
+ * @param engineMarkNeighbourSquares
+ * @param humanMarkNeighbourSquares
+ * @returns SquareCoordinates[]
+ */
+export const getDuplicateSquares = (
+  engineMarkNeighbourSquares: SquareCoordinates[],
+  humanMarkNeighbourSquares: SquareCoordinates[]
+) => {
+  const duplicates: SquareCoordinates[] = [];
+
+  for (let i = 0; i < engineMarkNeighbourSquares.length; i++) {
+    const duplicate = humanMarkNeighbourSquares.find(
+      (square: SquareCoordinates) =>
+        square.xAxis === engineMarkNeighbourSquares[i].xAxis &&
+        square.yAxis === engineMarkNeighbourSquares[i].yAxis
+    );
+    if (duplicate) duplicates.push(duplicate);
+  }
+
+  return duplicates;
+};
+
+export const getNeighbourSquares = (
+  square: SquareCoordinates,
   mark: SquareStatus,
   grid: SquareStatus[][]
 ) => {
-  const directionValues = Object.values(Direction);
-  const allMarkedSquares: MarkedSquare[] = [];
+  const emptyNeighbourSquares: SquareCoordinates[] = [];
+  const sameMarkNeighbourSquares: SquareCoordinates[] = [];
+  const threeInRowSquares: SquareCoordinates[] = [];
+
+  for (let direction of Object.values(Direction)) {
+    const moveFn = `move${direction}(square, 1)`;
+    const coordinates: SquareCoordinates = eval(moveFn);
+    const { xAxis, yAxis } = coordinates;
+
+    if (squareExists(xAxis, yAxis, grid)) {
+      const squareMark: SquareStatus = getSquareValue(xAxis, yAxis, grid);
+
+      switch (squareMark) {
+        case SquareStatus.EMPTY:
+          emptyNeighbourSquares.push(coordinates);
+          break;
+        case mark: {
+          sameMarkNeighbourSquares.push(coordinates);
+          const oppositeMoveFn = `move${oppositeDirection[direction]}(square, 1)`;
+          const oppositeSquareCoordinates: SquareCoordinates =
+            eval(oppositeMoveFn);
+          const { xAxis: x, yAxis: y } = oppositeSquareCoordinates;
+
+          if (squareExists(x, y, grid)) {
+            const oppositeSquareMark: SquareStatus = getSquareValue(x, y, grid);
+            if (oppositeSquareMark === SquareStatus.EMPTY) threeInRowSquares.push();
+          }
+          break;
+        }
+      }
+    }
+  }
+  
+  return {
+    emptySquares: emptyNeighbourSquares,
+    sameMarkSquares: sameMarkNeighbourSquares,
+    threeInRow: threeInRowSquares
+  };
+};
+
+export const getAllNeighbourSquares = (markedSquares: SquareCoordinates[], mark: SquareStatus, grid: SquareStatus[][]) => {
+  const emptySquaresSummary: SquareCoordinates[] = [];
+  const sameMarkSquaresSummary: SquareCoordinates[] = [];
+  const threeInRowSummary: SquareCoordinates[] = [];
 
   for (let i = 0; i < markedSquares.length; i++) {
-    const neighbouringSquares: NeighbouringSquare[] = [];
+    const { emptySquares, sameMarkSquares, threeInRow} = getNeighbourSquares(markedSquares[i], mark, grid);
 
-    for (let dir of directionValues) {
-      const neighbouringSquare = getNeighbouringSquare(
-        grid,
-        { xAxis: markedSquares[i].xAxis, yAxis: markedSquares[i].yAxis },
-        mark,
-        dir
-      );
-      if (neighbouringSquare) neighbouringSquares.push(neighbouringSquare);
+    for (let j = 0; j < emptySquares.length; j++) {
+      const foundSquare = emptySquaresSummary.find((square: SquareCoordinates) => square.xAxis === emptySquares[j].xAxis && square.yAxis === emptySquares[j].yAxis);
+
+      if (!foundSquare) emptySquaresSummary.push(emptySquares[j]);
     }
 
-    allMarkedSquares.push({
-      markedSquare: markedSquares[i],
-      squares: neighbouringSquares,
-    });
-  }
+    for (let k = 0; k < sameMarkSquares.length; k++) {
+      const foundSquare = sameMarkSquaresSummary.find((square: SquareCoordinates) => square.xAxis === sameMarkSquares[k].xAxis && square.yAxis === sameMarkSquares[k].yAxis);
 
-  return allMarkedSquares;
-};
-
-const getNeighbouringSquare = (
-  grid: SquareStatus[][],
-  markedSquare: SquareCoordinates,
-  markOfSquare: SquareStatus,
-  direction: string
-) => {
-  const { xAxis, yAxis } = markedSquare;
-
-  switch (direction) {
-    case Direction.UP:
-      return getSquare(xAxis, yAxis - 1, markOfSquare, grid);
-    case Direction.UPRIGHT:
-      return getSquare(xAxis + 1, yAxis - 1, markOfSquare, grid);
-    case Direction.RIGHT:
-      return getSquare(xAxis + 1, yAxis, markOfSquare, grid);
-    case Direction.DOWNRIGHT:
-      return getSquare(xAxis + 1, yAxis + 1, markOfSquare, grid);
-    case Direction.DOWN:
-      return getSquare(xAxis, yAxis + 1, markOfSquare, grid);
-    case Direction.DOWNLEFT:
-      return getSquare(xAxis - 1, yAxis + 1, markOfSquare, grid);
-    case Direction.LEFT:
-      return getSquare(xAxis - 1, yAxis, markOfSquare, grid);
-    case Direction.UPLEFT:
-      return getSquare(xAxis - 1, yAxis - 1, markOfSquare, grid);
-  }
-};
-
-const getSquare = (
-  x: number,
-  y: number,
-  mark: SquareStatus,
-  grid: SquareStatus[][]
-): NeighbouringSquare | null => {
-  if (squareExists(x, y, grid)) {
-    const squareValue = getSquareValue(x, y, grid);
-
-    switch (squareValue) {
-      case SquareStatus.EMPTY:
-        // Add into array of empty squares
-        return {
-          empty: {
-            xAxis: x,
-            yAxis: y,
-          },
-        };
-      case mark:
-        // same mark as checked mark (circle alebo cross ) - zistiť či nie je kombinacia troch rovnakých znakov v radoch,
-        // stlpcoch a diagonalach (varianty 1 dopredu a 1 dozadu, 2 dopredu, 2 dozadu) - lepšie: pri každom nájdenom overiť,
-        // či má pred sebou a za sebou rovnaký znak, vo všetkých smeroch, 4 overenia z 8 (zvyšné sú to isté iba v opačnom smere) - podla toho pridať body
-        // máme duplicitné polia - asi uprednostniť - ak najde rovnake pole a ma rozny znak, uprednostnit nie null a prepisat / opravit
-        return {
-          checkedMark: {
-            xAxis: x,
-            yAxis: y,
-          },
-        };
-      default:
-        // superiaci mark, buď circle alebo cross - overiť rovnako ako pri druhom case
-        return {
-          otherMark: {
-            xAxis: x,
-            yAxis: y,
-          },
-        };
+      if (!foundSquare) sameMarkSquaresSummary.push(sameMarkSquares[k]);
     }
-  } else {
-    return null;
+
+    for (let l = 0; l < threeInRow.length; l++) {
+      const foundSquare = threeInRowSummary.find((square: SquareCoordinates) => square.xAxis === threeInRow[l].xAxis && square.yAxis === threeInRow[l].yAxis);
+
+      if (!foundSquare) threeInRowSummary.push(threeInRow[l]);
+    }
   }
+
+  console.log(emptySquaresSummary, sameMarkSquaresSummary, threeInRowSummary);
+
+  return {
+    emptySquaresSummary,
+    sameMarkSquaresSummary,
+    threeInRowSummary
+  };
 };
+

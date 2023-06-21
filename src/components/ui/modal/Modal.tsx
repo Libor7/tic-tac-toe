@@ -9,25 +9,23 @@ import classes from "./Modal.module.css";
 import Backdrop from "../backdrop/Backdrop";
 import ModalOverlay from "./ModalOverlay";
 
-/** CUSTOM */
-import { iconActions } from "../../../store";
-
 const backdropElement = document.getElementById("backdrop-root")!;
 const overlayElement = document.getElementById("overlay-root")!;
 
 interface ModalProps {
   children: React.ReactNode;
   closeHandler: () => void;
+  showCloseBtn: boolean;
 }
 
 const Modal: FC<ModalProps> = (props) => {
-  const { children, closeHandler } = props;
+  const { children, closeHandler, showCloseBtn } = props;
 
   return (
     <>
-      {ReactDOM.createPortal(<Backdrop onClick={() => {}} />, backdropElement)}
+      {ReactDOM.createPortal(<Backdrop onClick={closeHandler} />, backdropElement)}
       {ReactDOM.createPortal(
-        <ModalOverlay onModalClose={closeHandler}>
+        <ModalOverlay onModalClose={closeHandler} displayClose={showCloseBtn}>
           {children}
         </ModalOverlay>,
         overlayElement

@@ -13,8 +13,11 @@ import { RootState, gridActions, resultActions } from "../../store";
 import { getSquareValue } from "../../util/util";
 import {
   generateRandomNumberInRange,
+  getAllNeighbourSquares,
+  getDuplicateSquares,
   getFlattenArray,
   getRandomSquareCoordinates,
+  getSquaresWithMark,
   isGridEmpty,
   isGridFilled,
   millisecondOptions,
@@ -62,7 +65,7 @@ const Grid = () => {
   useEffect(() => {
     if (playAgainstComp) {
       if (engineStarts) {
-        // TODO - klik new game v menu, nespustí znovu prvý ťah engine, hoci grid je prázdny 
+        // TODO - klik new game v menu, nespustí znovu prvý ťah engine, hoci grid je prázdny
         // dispatch(resultActions.setWaitingForEngineResponse(true));
 
         if (isGridEmpty(getFlattenArray(grid))) {
@@ -84,8 +87,8 @@ const Grid = () => {
         }
       }
     }
-  // Array is missing grid as a dependency, because it crashes app due to infinite loop danger 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Array is missing grid as a dependency, because it crashes app due to infinite loop danger
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     clickedSquare,
     dispatch,
@@ -103,11 +106,64 @@ const Grid = () => {
         myMark
       ) {
         if (!isGridFilled(getFlattenArray(grid))) {
-          const { xAxis, yAxis } = getRandomSquareCoordinates(grid);    // TODO - nevyberať random square ale vyberať z užšieho výberu lepších možností 
-          setTimeout(() => {
+          const squaresMarkedByHuman = getSquaresWithMark(myMark, grid);
+          const squaresMarkedByEngine = getSquaresWithMark(engineMark, grid);
+
+          const {
+            emptySquaresSummary,
+            sameMarkSquaresSummary,
+            threeInRowSummary,
+          } = getAllNeighbourSquares(squaresMarkedByHuman, myMark, grid);
+
+          const duplicateSquares = getDuplicateSquares(emptySquaresSummary, sameMarkSquaresSummary);
+          console.log(duplicateSquares);
+
+          if (emptySquaresSummary.length > 0) {
+            const { xAxis, yAxis } =
+              emptySquaresSummary[
+                generateRandomNumberInRange(emptySquaresSummary.length)
+              ];
             makeAMove(yAxis, xAxis, engineMark);
             dispatch(resultActions.setWaitingForEngineResponse(false));
-          }, milliseconds);
+          } else if (sameMarkSquaresSummary.length > 0) {
+            const { xAxis, yAxis } =
+              sameMarkSquaresSummary[
+                generateRandomNumberInRange(sameMarkSquaresSummary.length)
+              ];
+            makeAMove(yAxis, xAxis, engineMark);
+            dispatch(resultActions.setWaitingForEngineResponse(false));
+          } else if (threeInRowSummary.length > 0) {
+            const { xAxis, yAxis } =
+              threeInRowSummary[
+                generateRandomNumberInRange(threeInRowSummary.length)
+              ];
+            makeAMove(yAxis, xAxis, engineMark);
+            dispatch(resultActions.setWaitingForEngineResponse(false));
+          } else {
+            const { xAxis, yAxis } = getRandomSquareCoordinates(grid);
+            makeAMove(yAxis, xAxis, engineMark);
+            dispatch(resultActions.setWaitingForEngineResponse(false));
+          }
+
+          // Temporary Backup 
+
+          // if (emptySquaresSummary.length > 0) {
+          //   const { xAxis, yAxis } = emptySquaresSummary[generateRandomNumberInRange(emptySquaresSummary.length)];
+          //   makeAMove(yAxis, xAxis, engineMark);
+          //   dispatch(resultActions.setWaitingForEngineResponse(false));
+          // } else if (sameMarkSquaresSummary.length > 0) {
+          //   const { xAxis, yAxis } = sameMarkSquaresSummary[generateRandomNumberInRange(sameMarkSquaresSummary.length)];
+          //   makeAMove(yAxis, xAxis, engineMark);
+          //   dispatch(resultActions.setWaitingForEngineResponse(false));
+          // } else if (threeInRowSummary.length > 0) {
+          //   const { xAxis, yAxis } = threeInRowSummary[generateRandomNumberInRange(threeInRowSummary.length)];
+          //   makeAMove(yAxis, xAxis, engineMark);
+          //   dispatch(resultActions.setWaitingForEngineResponse(false));
+          // } else {
+          //   const { xAxis, yAxis } = getRandomSquareCoordinates(grid);
+          //   makeAMove(yAxis, xAxis, engineMark);
+          //   dispatch(resultActions.setWaitingForEngineResponse(false));
+          // }
         } else {
           dispatch(resultActions.setEndOfGame(true));
         }

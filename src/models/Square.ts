@@ -16,14 +16,14 @@ export enum SquareStatus {
 }
 
 export enum Direction {
-  UP = "up",
-  UPRIGHT = "up-right",
-  RIGHT = "right",
-  DOWNRIGHT = "down-right",
-  DOWN = "down",
-  DOWNLEFT = "down-left",
-  LEFT = "left",
-  UPLEFT = "up-left",
+  UP = "Up",
+  UPRIGHT = "UpRight",
+  RIGHT = "Right",
+  DOWNRIGHT = "DownRight",
+  DOWN = "Down",
+  DOWNLEFT = "DownLeft",
+  LEFT = "Left",
+  UPLEFT = "UpLeft",
 }
 
 export interface NeighbouringSquare {
@@ -34,9 +34,3 @@ export interface MarkedSquare {
   markedSquare: SquareCoordinates;
   squares: NeighbouringSquare[];
 }
-
-// export interface FoundSquares {
-//   empty: SquareCoordinates[];
-//   myMarks: SquareCoordinates[];
-//   engineMarks: SquareCoordinates[];
-// }
