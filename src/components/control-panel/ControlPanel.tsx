@@ -1,10 +1,6 @@
 /** LIBRARIES */
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CSSTransition from "react-transition-group/CSSTransition";
-
-/** STYLES */
-import classes from "./ControlPanel.module.css";
 
 /** MODELS */
 import { Icon } from "../../models/Icon";
@@ -23,7 +19,6 @@ import Modal from "../ui/modal/Modal";
 import Notification from "../ui/notification/Notification";
 
 const ControlPanel = () => {
-  // const nodeRef = useRef(null);   // TODO animácia
   const dispatch = useDispatch();
   const {
     allControlsDisplayed,
@@ -51,7 +46,6 @@ const ControlPanel = () => {
   const tabletView = window.innerWidth >= tabletBreakpoint;
   const modalBtnsInRow = largeMobileView ? 3 : 2;
 
-  // TODO skúsiť presunúť do osobitného súboru iconList - dispatch: Dispatch<>
   const iconList: Icon[] = useMemo(
     () => [
       {
@@ -149,24 +143,6 @@ const ControlPanel = () => {
     <>
       {tabletView && <Buttons icons={iconList} initial={false} inRow={1} />}
       {!tabletView && <Buttons icons={iconList} initial={true} inRow={3} />}
-      {/* <CSSTransition
-        in={allControlsDisplayed}
-        timeout={500}
-        classNames="modal-fade-slide"
-        nodeRef={nodeRef}
-        mountOnEnter
-        unmountOnExit
-        onEnter={() => console.log("onEnter")}
-        onEntering={() => console.log("onEntering")}
-        onEntered={() => console.log("onEntered")}
-        onExit={() => console.log("onExit")}
-        onExiting={() => console.log("onExiting")}
-        onExited={() => console.log("onExited")}
-      >
-        <Modal onModalClose={closeModalHandler}>
-          <Buttons icons={iconList} initial={false} inRow={2} />
-        </Modal>
-      </CSSTransition> */}
       {allControlsDisplayed && (
         <Modal closeHandler={hideControlsHandler} showCloseBtn={true}>
           <Buttons icons={iconList} initial={false} inRow={modalBtnsInRow} />

@@ -111,6 +111,7 @@ const squareExists = (xAxis: number, yAxis: number, grid: SquareStatus[][]) => {
 };
 
 /** Methods for navigation in the grid. The input is a square we are currently on. It returns a square to which we move. Repetition decides how many times we want to move in that direction */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const moveUp = (
   currentSquare: SquareCoordinates,
   repetition: number
@@ -121,6 +122,7 @@ const moveUp = (
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const moveUpRight = (
   currentSquare: SquareCoordinates,
   repetition: number
@@ -131,6 +133,7 @@ const moveUpRight = (
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const moveRight = (
   currentSquare: SquareCoordinates,
   repetition: number
@@ -141,6 +144,7 @@ const moveRight = (
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const moveDownRight = (
   currentSquare: SquareCoordinates,
   repetition: number
@@ -151,6 +155,7 @@ const moveDownRight = (
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const moveDown = (
   currentSquare: SquareCoordinates,
   repetition: number
@@ -161,6 +166,7 @@ const moveDown = (
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const moveDownLeft = (
   currentSquare: SquareCoordinates,
   repetition: number
@@ -171,6 +177,7 @@ const moveDownLeft = (
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const moveLeft = (
   currentSquare: SquareCoordinates,
   repetition: number
@@ -181,6 +188,7 @@ const moveLeft = (
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const moveUpLeft = (
   currentSquare: SquareCoordinates,
   repetition: number
@@ -226,6 +234,7 @@ export const getNeighbourSquares = (
 
   for (let direction of Object.values(Direction)) {
     const moveFn = `move${direction}(square, 1)`;
+    // eslint-disable-next-line no-eval
     const coordinates: SquareCoordinates = eval(moveFn);
     const { xAxis, yAxis } = coordinates;
 
@@ -240,6 +249,7 @@ export const getNeighbourSquares = (
           sameMarkNeighbourSquares.push(coordinates);
           const oppositeMoveFn = `move${oppositeDirection[direction]}(square, 1)`;
           const oppositeSquareCoordinates: SquareCoordinates =
+            // eslint-disable-next-line no-eval
             eval(oppositeMoveFn);
           const { xAxis: x, yAxis: y } = oppositeSquareCoordinates;
 
@@ -286,9 +296,7 @@ export const getAllNeighbourSquares = (markedSquares: SquareCoordinates[], mark:
       if (!foundSquare) threeInRowSummary.push(threeInRow[l]);
     }
   }
-
-  console.log(emptySquaresSummary, sameMarkSquaresSummary, threeInRowSummary);
-
+  
   return {
     emptySquaresSummary,
     sameMarkSquaresSummary,

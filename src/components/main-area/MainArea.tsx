@@ -1,6 +1,3 @@
-/** LIBRARIES */
-import React from "react";
-
 /** STYLES */
 import classes from "./MainArea.module.css";
 

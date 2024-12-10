@@ -3,8 +3,6 @@
   align-items: center;
   justify-content: center;
   color: var(--primary-color);
-  /* background-color: var(--primary-color);
-    color: var(--secondary-color); */
   font-weight: 400;
   text-align: center;
 }
@@ -31,8 +29,8 @@
 }
 
 @media (min-width: 1200px) {
-    .notification-size {
-      min-height: 150px;
-      min-width: 450px;
-    }
+  .notification-size {
+    min-height: 150px;
+    min-width: 450px;
   }
+}

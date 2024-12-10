@@ -1,11 +1,11 @@
 :root {
-  /* COLORS */
   --primary-color: #00f;
   --secondary-color: #fff;
   --tertiary-color: #ff8000;
 }
 
-html, body {
+html,
+body {
   max-width: 100%;
   overflow-x: hidden;
 }
@@ -28,7 +28,7 @@ body {
 
 @media (min-width: 900px) {
   #root {
-      flex-direction: row;
+    flex-direction: row;
   }
 }
 

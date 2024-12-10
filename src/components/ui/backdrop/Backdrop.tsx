@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import classes from "./Backdrop.module.css";
 
 interface BackdropProps {

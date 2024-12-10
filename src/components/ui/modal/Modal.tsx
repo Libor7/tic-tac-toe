@@ -2,9 +2,6 @@
 import React, { FC } from "react";
 import ReactDOM from "react-dom";
 
-/** STYLES */
-import classes from "./Modal.module.css";
-
 /** CUSTOM COMPONENTS */
 import Backdrop from "../backdrop/Backdrop";
 import ModalOverlay from "./ModalOverlay";

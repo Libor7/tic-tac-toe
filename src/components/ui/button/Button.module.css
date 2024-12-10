@@ -2,7 +2,6 @@
   background-color: var(--secondary-color);
   color: var(--primary-color);
   padding: 0;
-  /* TODO font-size: 1.5rem;   24px    font family, font-weight */
   border: unset;
   padding: 0;
   cursor: pointer;

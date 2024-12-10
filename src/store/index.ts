@@ -16,7 +16,7 @@ const initialIconState: IconState = {
   allControlsDisplayed: false,
 };
 
-const initialGridState: GridState = {           // TODO Splitting Our Code poznamky , kto má viac bodov vysvietiť na zeleno, prehrávajúci na červeno 
+const initialGridState: GridState = {           // TODO Splitting Our Code poznamky, kto má viac bodov vysvietiť na zeleno, prehrávajúci na červeno 
   grid: setNewGrid(3, 3),
   clickedSquare: null,
   lastMove: null,

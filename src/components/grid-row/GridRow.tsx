@@ -1,5 +1,5 @@
 /** LIBRARIES */
-import React, { FC } from "react";
+import { FC } from "react";
 
 /** STYLES */
 import classes from "./GridRow.module.css";
